@@ -36,7 +36,7 @@ public class RestService {
 		}
 		
 		//Creating new ResponseObject
-		respObj = new ResponseObject("A-17002", "Sanitär Auftrag", dummyLocations);
+		respObj = new ResponseObject("A-17002", "Super Auftrag", dummyLocations);
 		
 		return respObj;
 	}
