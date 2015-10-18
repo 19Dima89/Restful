@@ -7,9 +7,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import org.apache.log4j.Logger;
 
 @Path("/service")
 public class RestService {
+	
+	//Initializing the logger
+	static final Logger logger = Logger.getRootLogger();
 	
 	//Declaring variables
 	ArrayList<Location> dummyLocations;
@@ -21,6 +25,9 @@ public class RestService {
 	public ResponseObject responseMsg(@QueryParam("long") Double longitude, @QueryParam("lat") Double latitude,
 	@DefaultValue("3") @QueryParam("numberOf") int numberOf)
 	{
+		logger.info("Received GET-Request, with the following parameters: longitude="+longitude+", latitude="+latitude
+				+", numberOf="+numberOf);
+		
 		if(numberOf <= 0)
 		{
 			numberOf = 3;
