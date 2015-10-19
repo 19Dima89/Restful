@@ -27,7 +27,6 @@ public class RestService {
 	Gson gson = new GsonBuilder().create();
 	
 	//Declaring variables
-	//private ArrayList<Task> dummyData;
 	private ArrayList<DetailedTask> dummyData;
 	
 	@GET
