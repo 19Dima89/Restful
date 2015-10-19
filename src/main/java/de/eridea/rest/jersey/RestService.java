@@ -29,22 +29,18 @@ public class RestService {
 	@Path("/tasks")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response responseMsg(@QueryParam("long") Double longitude, @QueryParam("lat") Double latitude,
-	@DefaultValue("1") @QueryParam("maxResults") int maxResults)
+	@DefaultValue("-1") @QueryParam("maxResults") int maxResults)
 	{
 		logger.info("Received GET-Request, with the following parameters: longitude="+longitude+", latitude="+latitude
 				+", numberOf="+maxResults);
 		
-		if(maxResults <= 0)
-		{
-			maxResults = 1;
-		}
-		else if(maxResults > 10)
-		{
-			maxResults = 10;
-		}
-		
 		//Initializing dummy data
 		initializeDummyData(latitude, longitude);
+		
+		if(maxResults <= 0 || maxResults > dummyData.size())
+		{
+			maxResults = dummyData.size();
+		}
 		
 		return Response.status(200).entity(gson.toJson(generateResponseData(dummyData, maxResults))).build();
 	}
