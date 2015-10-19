@@ -1,7 +1,5 @@
 package de.eridea.rest.types;
 
-import java.util.ArrayList;
-
 public class DetailedTask extends Task {
 
 	private String status;
