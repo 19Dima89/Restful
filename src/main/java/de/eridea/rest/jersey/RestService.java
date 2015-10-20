@@ -56,7 +56,7 @@ public class RestService {
 	@GET
 	@Path("/tasks/{parameter}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response responseMsg( @PathParam("parameter") String parameter, @DefaultValue("Nothing to say") @QueryParam("value") String value) {
+	public Response responseMsg( @PathParam("parameter") String parameter) {
 
 		logger.info("Received GET-Request to display the details of the task with the ID "+parameter);
 		
