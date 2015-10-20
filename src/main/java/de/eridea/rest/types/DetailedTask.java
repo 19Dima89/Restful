@@ -1,11 +1,13 @@
 package de.eridea.rest.types;
 
+import java.util.List;
+
 public class DetailedTask extends Task {
 
 	private String status;
-	private String items;
+	private List<Item> items;
 	
-	public DetailedTask(String id, String description, double latitude, double longitude, String status, String items) {
+	public DetailedTask(String id, String description, double latitude, double longitude, String status, List<Item> items) {
 		super(id, description, latitude, longitude);
 		this.status = status;
 		this.items = items;
@@ -15,7 +17,7 @@ public class DetailedTask extends Task {
 		return status;
 	}
 
-	public String getItems() {
+	public List<Item> getItems() {
 		return items;
 	}
 	
@@ -23,6 +25,5 @@ public class DetailedTask extends Task {
 	{
 		return new Task(this.getId(), this.getDescription(), this.getLatitude(), this.getLongitude());
 	}
-	
 
 }
