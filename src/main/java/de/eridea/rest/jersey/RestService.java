@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -50,7 +51,8 @@ public class RestService {
 		}
 		
 		logger.info("Response with a list, which consists of "+maxResults+" tasks and the status-code 200");
-		return Response.status(200).entity(gson.toJson(generateResponseData(dummyData, maxResults))).build();
+		return Response.status(200).entity(gson.toJson(generateResponseData(dummyData, maxResults))).header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Methods", "GET").build();
 	}
 	
 	@GET
@@ -72,13 +74,15 @@ public class RestService {
 				
 				output = dummyData.get(i);
 				
-				return Response.status(200).entity(gson.toJson(output)).build();
+				return Response.status(200).entity(gson.toJson(output)).header("Access-Control-Allow-Origin", "*")
+						.header("Access-Control-Allow-Methods", "GET").build();
 			}
 		}
 		
 		logger.info("Task not found, response with the status-code 404");
 		
-		return Response.status(404).entity("Task not found!").build();
+		return Response.status(404).entity("Task not found!").header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Methods", "GET").build();
 	}
 	
 	private void initializeDummyData()
