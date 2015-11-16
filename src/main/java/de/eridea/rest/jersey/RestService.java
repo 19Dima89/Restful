@@ -1,9 +1,7 @@
 package de.eridea.rest.jersey;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -11,7 +9,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -60,7 +57,7 @@ public class RestService {
 	@GET
 	@Path("/tasks/{parameter}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response responseMsg( @PathParam("parameter") String parameter) {
+	public Response responseMsg( @PathParam("parameter") int parameter) {
 
 		logger.info("Received GET-Request to display the details of the task with the ID "+parameter);
 		
@@ -70,7 +67,7 @@ public class RestService {
 		
 		for(int i=0; i<dummyData.size(); i++)
 		{
-			if(dummyData.get(i).getId().equals(parameter))
+			if(dummyData.get(i).getId() == parameter)
 			{
 				logger.info("Task with the ID "+parameter+" found among the stored tasks, response with the status-code 200");
 				
@@ -101,7 +98,11 @@ public class RestService {
 		dummyData.add(new DetailedTask("5691", "Wartung Maschine 5691", 47.852928, 12.119948, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"))));
 		dummyData.add(new DetailedTask("7766", "Wartung Maschine 7766", 47.852165, 12.116483, "open", Arrays.asList(new Item("9875", "Generator"))));
 		dummyData.add(new DetailedTask("9991", "Wartung Maschine 9991", 47.853490, 12.114681, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"), new Item("9874", "Teileaustausch"))));*/
-		dummyData.add(new DetailedTask("1234", "Wartung Maschine 1234", 47.852967, 12.124801, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator")), 83022, "Rosenheim", "Hochschulestr. 1", "Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"}, new Date(2015, 12, 12), new Date(2015, 10, 12)));
+		dummyData.add(new DetailedTask(1235, "Wartung Maschine 1234", 47.852967, 12.124801, 
+		 		"open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), 
+				new Item("9875", "Generator")), 83022, "Rosenheim", "Hochschulestr. 1", 
+		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"}, 
+		 		new long[]{123, 456}, 20151212, 20151012));
 	}
 	
 	private ArrayList<Task> convertDetailedTaskToTask(ArrayList<DetailedTask> dTask)

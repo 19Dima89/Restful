@@ -2,12 +2,12 @@ package de.eridea.rest.types;
 
 public class Task {
 	
-	private String id;
+	private int id;
 	private String description;
 	private double latitude;
 	private double longitude;
 	
-	public Task(String id, String description, double latitude, double longitude)
+	public Task(int id, String description, double latitude, double longitude)
 	{
 		this.id = id ;
 		this.description = description;
@@ -23,7 +23,7 @@ public class Task {
 		return longitude;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
