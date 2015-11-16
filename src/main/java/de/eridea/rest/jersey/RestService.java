@@ -1,7 +1,9 @@
 package de.eridea.rest.jersey;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -89,7 +91,7 @@ public class RestService {
 	{
 		dummyData = new ArrayList<DetailedTask>();
 		
-		dummyData.add(new DetailedTask("1234", "Wartung Maschine 1234", 47.852967, 12.124801, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"))));
+		/*dummyData.add(new DetailedTask("1234", "Wartung Maschine 1234", 47.852967, 12.124801, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"))));
 		dummyData.add(new DetailedTask("2356", "Wartung Maschine 2356", 47.851192, 12.126987, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"), new Item("9874", "Teileaustausch"))));
 		dummyData.add(new DetailedTask("7267", "Wartung Maschine 7267", 47.852042, 12.123618, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"))));
 		dummyData.add(new DetailedTask("2984", "Wartung Maschine 2984", 47.851848, 12.120646, "open", Arrays.asList(new Item("9875", "Generator"))));
@@ -98,7 +100,8 @@ public class RestService {
 		dummyData.add(new DetailedTask("8344", "Wartung Maschine 8344", 47.854771, 12.122609, "open", null));
 		dummyData.add(new DetailedTask("5691", "Wartung Maschine 5691", 47.852928, 12.119948, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"))));
 		dummyData.add(new DetailedTask("7766", "Wartung Maschine 7766", 47.852165, 12.116483, "open", Arrays.asList(new Item("9875", "Generator"))));
-		dummyData.add(new DetailedTask("9991", "Wartung Maschine 9991", 47.853490, 12.114681, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"), new Item("9874", "Teileaustausch"))));
+		dummyData.add(new DetailedTask("9991", "Wartung Maschine 9991", 47.853490, 12.114681, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"), new Item("9874", "Teileaustausch"))));*/
+		dummyData.add(new DetailedTask("1234", "Wartung Maschine 1234", 47.852967, 12.124801, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator")), 83022, "Rosenheim", "Hochschulestr. 1", "Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"}, new Date(2015, 12, 12), new Date(2015, 10, 12)));
 	}
 	
 	private ArrayList<Task> convertDetailedTaskToTask(ArrayList<DetailedTask> dTask)
