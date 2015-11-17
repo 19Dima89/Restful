@@ -28,9 +28,6 @@ public class RestService {
 	static final Logger logger = Logger.getRootLogger();
 	private Gson gson = new GsonBuilder().create();
 	
-	//Declaring variables
-	private ArrayList<DetailedTask> dummyData;
-	
 	@GET
 	@Path("/tasks")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -40,17 +37,15 @@ public class RestService {
 		logger.info("Received GET-Request, with the following parameters: longitude="+longitude+", latitude="+latitude
 				+", maxResults="+maxResults);
 		
-		//Initializing dummy data
-		initializeDummyData();
-		ArrayList<Task> dummyData = convertDetailedTaskToTask(this.dummyData);
+		ArrayList<Task> convertedTasks = convertDetailedTaskToTask(JDBConnection.selectAllTasks());
 		
-		if(maxResults <= 0 || maxResults > dummyData.size())
+		if(maxResults <= 0 || maxResults > convertedTasks.size())
 		{
-			maxResults = dummyData.size();
+			maxResults = convertedTasks.size();
 		}
 		
 		logger.info("Response with a list, which consists of "+maxResults+" tasks and the status-code 200");
-		return Response.status(200).entity(gson.toJson(generateResponseData(dummyData, maxResults))).header("Access-Control-Allow-Origin", "*")
+		return Response.status(200).entity(gson.toJson(generateResponseData(convertedTasks, maxResults))).header("Access-Control-Allow-Origin", "*")
 				.header("Access-Control-Allow-Methods", "GET").build();
 	}
 	
@@ -63,46 +58,24 @@ public class RestService {
 		
 		DetailedTask output = null;
 		
-		initializeDummyData();
-		
-		for(int i=0; i<dummyData.size(); i++)
-		{
-			if(dummyData.get(i).getId() == parameter)
-			{
-				logger.info("Task with the ID "+parameter+" found among the stored tasks, response with the status-code 200");
-				
-				output = dummyData.get(i);
-				
-				return Response.status(200).entity(gson.toJson(output)).header("Access-Control-Allow-Origin", "*")
-						.header("Access-Control-Allow-Methods", "GET").build();
-			}
-		}
-		
-		logger.info("Task not found, response with the status-code 404");
-		
-		return Response.status(404).entity("Task not found!").header("Access-Control-Allow-Origin", "*")
-				.header("Access-Control-Allow-Methods", "GET").build();
-	}
-	
-	private void initializeDummyData()
-	{
-		dummyData = new ArrayList<DetailedTask>();
-		
-		/*dummyData.add(new DetailedTask("1234", "Wartung Maschine 1234", 47.852967, 12.124801, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"))));
-		dummyData.add(new DetailedTask("2356", "Wartung Maschine 2356", 47.851192, 12.126987, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"), new Item("9874", "Teileaustausch"))));
-		dummyData.add(new DetailedTask("7267", "Wartung Maschine 7267", 47.852042, 12.123618, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"))));
-		dummyData.add(new DetailedTask("2984", "Wartung Maschine 2984", 47.851848, 12.120646, "open", Arrays.asList(new Item("9875", "Generator"))));
-		dummyData.add(new DetailedTask("5112", "Wartung Maschine 5112", 47.853871, 12.116558, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9874", "Teileaustausch"))));
-		dummyData.add(new DetailedTask("8442", "Wartung Maschine 8442", 47.855289, 12.118264, "open", Arrays.asList(new Item("9874", "Teileaustausch"))));
-		dummyData.add(new DetailedTask("8344", "Wartung Maschine 8344", 47.854771, 12.122609, "open", null));
-		dummyData.add(new DetailedTask("5691", "Wartung Maschine 5691", 47.852928, 12.119948, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"))));
-		dummyData.add(new DetailedTask("7766", "Wartung Maschine 7766", 47.852165, 12.116483, "open", Arrays.asList(new Item("9875", "Generator"))));
-		dummyData.add(new DetailedTask("9991", "Wartung Maschine 9991", 47.853490, 12.114681, "open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), new Item("9875", "Generator"), new Item("9874", "Teileaustausch"))));*/
-		dummyData.add(new DetailedTask(1235, "Wartung Maschine 1234", 47.852967, 12.124801, 
+		DetailedTask dt = new DetailedTask(1239, "Wartung Maschine 1234", 47.852967, 12.124801, 
 		 		"open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), 
 				new Item("9875", "Generator")), 83022, "Rosenheim", "Hochschulestr. 1", 
 		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"}, 
-		 		new long[]{123, 456}, 20151212, 20151012));
+		 		new long[]{123, 456}, "12.12.2015", "12.10.2015");
+				
+		JDBConnection.insertTask(dt);
+		
+		output = JDBConnection.selectTask(parameter);
+		
+		return Response.status(200).entity(gson.toJson(output)).header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Methods", "GET").build();
+		
+		
+		//logger.info("Task not found, response with the status-code 404");
+		
+		/*return Response.status(404).entity("Task not found!").header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Methods", "GET").build();*/
 	}
 	
 	private ArrayList<Task> convertDetailedTaskToTask(ArrayList<DetailedTask> dTask)

@@ -9,28 +9,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder={"status", "items", "id", "description", "strasse", "plz", "ort", "latitude", "longitude", "type", "information", "hilfsmittel", "auftragsfrist", "eingangsdatum"})
 public class DetailedTask extends Task {
 
-	private String status;
 	private List<Item> items;
-	private int plz;
-	private String ort;
-	private String strasse;
 	private String type;
 	private String information;
 	private String[] hilfsmittel;
 	private long[] images;
-	private long auftragsfrist;
-	private long eingangsdatum;
+	private String auftragsfrist;
+	private String eingangsdatum;
 	
 	public DetailedTask(int id, String description, double latitude, double longitude, String status, 
 			List<Item> items, int plz, String ort, String strasse, String type, String information, 
-			String[] hilfsmittel, long[] images, long auftragsfrist, long eingangsdatum) 
+			String[] hilfsmittel, long[] images, String auftragsfrist, String eingangsdatum) 
 	{
-		super(id, description, latitude, longitude);
-		this.status = status;
+		super(id, description, latitude, longitude, status, strasse, plz, ort);
 		this.items = items;
-		this.plz = plz;
-		this.ort = ort;
-		this.strasse = strasse;
 		this.type = type;
 		this.information = information;
 		this.hilfsmittel = hilfsmittel;
@@ -42,19 +34,7 @@ public class DetailedTask extends Task {
 	public long[] getImages() {
 		return images;
 	}
-
-	public int getPlz() {
-		return plz;
-	}
-
-	public String getOrt() {
-		return ort;
-	}
-
-	public String getStrasse() {
-		return strasse;
-	}
-
+	
 	public String getType() {
 		return type;
 	}
@@ -67,25 +47,20 @@ public class DetailedTask extends Task {
 		return hilfsmittel;
 	}
 
-	public long getAuftragsfrist() {
+	public String getAuftragsfrist() {
 		return auftragsfrist;
 	}
 
-	public long getEingangsdatum() {
+	public String getEingangsdatum() {
 		return eingangsdatum;
 	}
-
-	public String getStatus() {
-		return status;
-	}
-
+	
 	public List<Item> getItems() {
 		return items;
 	}
 	
 	public Task returnAsTask()
 	{
-		return new Task(this.getId(), this.getDescription(), this.getLatitude(), this.getLongitude());
+		return new Task(this.getId(), this.getDescription(), this.getLatitude(), this.getLongitude(), this.getStatus(), this.getStrasse(), this.getPlz(), this.getOrt());
 	}
-
 }
