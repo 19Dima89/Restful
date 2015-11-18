@@ -37,14 +37,14 @@ public class Task {
 	/**
 	 * Instantiates a new task.
 	 *
-	 * @param id 			Task ID.
+	 * @param id 		Task ID.
 	 * @param description 	Task description.
-	 * @param latitude 		Task latitude.
+	 * @param latitude 	Task latitude.
 	 * @param longitude 	Task longitude.
-	 * @param status 		Task status.
-	 * @param strasse 		Task location (street).
-	 * @param plz 			Task location (postal code).
-	 * @param ort 			Task location (town).
+	 * @param status 	Task status.
+	 * @param strasse 	Task location (street).
+	 * @param plz 		Task location (postal code).
+	 * @param ort 		Task location (town).
 	 */
 	public Task(int id, String description, double latitude, double longitude, String status, String strasse, int plz, String ort)
 	{
