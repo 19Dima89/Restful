@@ -37,17 +37,17 @@ public class RestService {
 	/** Gson builder. */
 	private Gson gson = new GsonBuilder().create();
 	
-	/**	Database interaction. */
+	/** Database interaction. */
 	private DBConnection dbInterface = new JDBConnection();
 	
 	/**
 	 * Responds to a GET-Request, by listing all available tasks.
 	 *
 	 * @param longitude 	longitude of a task
-	 * @param latitude 		latitude of a task
+	 * @param latitude 	latitude of a task
 	 * @param maxResults 	max number of results inside the response
 	 * @return Response 	HTTP Response, which contains all tasks (limited by maxResults) and the status-code 200 (if task found)
-	 * 						or the status-code 404 (if task is not found)	
+	 * 			or the status-code 404 (if task is not found)	
 	 */
 	@GET
 	@Path("/tasks")
@@ -106,7 +106,7 @@ public class RestService {
 	 *
 	 * @param id 		ID of a task that should be displayed
 	 * @return Response	HTTP Response, which contains the specified task and the status-code 200 (if task found)
-	 * 					or the status-code 404 (if task is not found)
+	 * 			or the status-code 404 (if task is not found)
 	 */
 	@GET
 	@Path("/tasks/{id}")
@@ -159,7 +159,7 @@ public class RestService {
 	/**
 	 * Converts an ArrayList of DetailedTask to an ArrayList of simple Tasks.
 	 *
-	 * @param dTask 			ArrayList, which should be converted
+	 * @param dTask 		ArrayList, which should be converted
 	 * @return ArrayList<Task> 	Converted List of Tasks
 	 */
 	private ArrayList<Task> convertDetailedTaskToTask(ArrayList<DetailedTask> dTask)
