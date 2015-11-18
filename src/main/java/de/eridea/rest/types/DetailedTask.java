@@ -39,19 +39,19 @@ public class DetailedTask extends Task {
 	/**
 	 * Instantiates a new detailed task.
 	 *
-	 * @param id 				The DetailedTask id.
+	 * @param id 			The DetailedTask id.
 	 * @param description 		The DetailedTask description.
-	 * @param latitude 			The DetailedTask latitude.
+	 * @param latitude 		The DetailedTask latitude.
 	 * @param longitude 		The DetailedTask longitude.
-	 * @param status 			The DetailedTask status.
-	 * @param items 			The DetailedTask items.
-	 * @param plz 				The DetailedTask plz.
-	 * @param ort 				The DetailedTask ort.
-	 * @param strasse 			The DetailedTask strasse.
-	 * @param type 				The DetailedTask type.
+	 * @param status 		The DetailedTask status.
+	 * @param items 		The DetailedTask items.
+	 * @param plz 			The DetailedTask plz.
+	 * @param ort 			The DetailedTask ort.
+	 * @param strasse 		The DetailedTask strasse.
+	 * @param type 			The DetailedTask type.
 	 * @param information 		The DetailedTask information.
 	 * @param hilfsmittel 		The DetailedTask hilfsmittel.
-	 * @param images 			The DetailedTask images.
+	 * @param images 		The DetailedTask images.
 	 * @param auftragsfrist 	The DetailedTask auftragsfrist.
 	 * @param eingangsdatum 	The DetailedTask eingangsdatum.
 	 */
