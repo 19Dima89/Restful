@@ -88,7 +88,7 @@ public class JDBConnection implements DBConnection{
 	 * Fetch a single task from the PostgreSQL database according to its ID.
 	 *
 	 * @param id 				ID of the task that needs to be fetched.
-	 * @return DetailedTask		Fetched Task.
+	 * @return DetailedTask			Fetched Task.
 	 * @throws SQLException Signals that a connection to the DB could not be established.
 	 * @throws ClassNotFoundException Signals that the JDBC driver class was not found.
 	 */
