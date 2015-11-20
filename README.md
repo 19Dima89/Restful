@@ -1,1 +1,1 @@
-# Restful web application for my work
+# Restful web application
