@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBElement;
 
 import org.apache.log4j.Logger;
 
@@ -161,9 +162,10 @@ public class RestService {
 	@PUT
 	@Path("/tasks/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response putStatus(@PathParam("id") int id)
+	public Response putStatus(@PathParam("id") int id, JAXBElement<String> g)
 	{
 		logger.info("Received PUT-Request to change the status of task "+id);
+		logger.info(g.getValue());
 		
 		boolean statusChanged = false;
 		
