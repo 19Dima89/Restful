@@ -163,24 +163,47 @@ public class RestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response putStatus(@PathParam("id") int id)
 	{
+		logger.info("Received PUT-Request to change the status of task "+id);
+		
 		boolean statusChanged = false;
 		
 		try
 		{
 			statusChanged = dbInterface.updateTaskStatus(id);
 		}
+		catch(SQLException e)
+		{
+			logger.info("Could not establish a connection to the Database. Authentification? (putStatus)");
+			
+			e.printStackTrace();
+		}
+		catch(ClassNotFoundException e)
+		{
+			logger.info("org.postgresql.Driver Class not found. (putStatus)");
+			
+			e.printStackTrace();
+		}
 		catch(Exception e)
 		{
+			logger.info("General exception (putStatus)");
+			
 			e.printStackTrace();
 		}
 		
 		if(statusChanged)
 		{
-			return Response.status(200).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").build();
+			logger.info("Status of task "+id+" changed to planned -> Response Status 200 (putStatus)");
+			
+			return Response.status(200).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "PUT").build();
 		}
 		else
 		{
-			return Response.status(404).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").build();
+			logger.info("Status of task "+id+" does not need to be changed, because it is already on planned"
+					+ "-> Response status 404 (putStatus");
+			
+			return Response.status(404).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "PUT").build();
 		}
 		
 		

@@ -175,7 +175,7 @@ public class JDBConnection implements DBConnection{
 		   c = DriverManager.getConnection(dataBaseLocation, dataBaseUser, dataBasePassword);
 		   c.setAutoCommit(false);
 		   
-		   logger.info("Opened database successfully (insertTask)");
+		   logger.info("Opened database successfully (updateTaskStatus)");
 	       
 	       stmt = c.createStatement();
 	       
@@ -186,6 +186,8 @@ public class JDBConnection implements DBConnection{
 	       stmt.close();
 	       c.commit();
 	       c.close();
+	       
+	       logger.info("Task Status changed to planned");
 		   
 	       return true;
 	}
