@@ -178,9 +178,9 @@ public class RestService {
 			logger.info("Could not convert request body json to prb");
 		}
 		
-		if(prb == null)
+		if(prb == null || !prb.getStatus().equals("open") || !prb.getStatus().equals("planned"))
 		{
-			logger.info("Wrong request body -> Response status 404 (putStatus)");
+			logger.info("Wrong request body -> Response status 400 (putStatus)");
 			
 			return Response.status(400).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "PUT").build();
@@ -221,9 +221,9 @@ public class RestService {
 		else
 		{
 			logger.info("Status of task "+id+" does not need to be changed, because it is already on planned"
-					+ "-> Response status 404 (putStatus");
+					+ "-> Response status 400 (putStatus");
 			
-			return Response.status(404).header("Access-Control-Allow-Origin", "*")
+			return Response.status(400).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "PUT").build();
 		}
 		
