@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import de.eridea.rest.database.DBConnection;
 import de.eridea.rest.database.JDBConnection;
 import de.eridea.rest.types.DetailedTask;
+import de.eridea.rest.types.PutRequestBody;
 import de.eridea.rest.types.Task;
 
 /**
@@ -162,16 +163,34 @@ public class RestService {
 	@PUT
 	@Path("/tasks/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response putStatus(@PathParam("id") int id, JAXBElement<String> g)
+	public Response putStatus(String requestBody, @PathParam("id") int id)
 	{
 		logger.info("Received PUT-Request to change the status of task "+id);
-		logger.info(g.getValue());
+		
+		PutRequestBody prb = null;
+		
+		try
+		{
+			prb = gson.fromJson(requestBody, PutRequestBody.class);
+		}
+		catch(Exception e)
+		{
+			logger.info("Could not convert request body json to prb");
+		}
+		
+		if(prb == null)
+		{
+			logger.info("Wrong request body -> Response status 404 (putStatus)");
+			
+			return Response.status(400).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "PUT").build();
+		}
 		
 		boolean statusChanged = false;
 		
 		try
 		{
-			statusChanged = dbInterface.updateTaskStatus(id);
+			statusChanged = dbInterface.updateTaskStatus(id, prb.getStatus());
 		}
 		catch(SQLException e)
 		{

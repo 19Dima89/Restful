@@ -41,5 +41,5 @@ public interface DBConnection {
 	 */
 	public void insertTask(DetailedTask dt) throws SQLException, ClassNotFoundException;
 	
-	public boolean updateTaskStatus(int id) throws SQLException, ClassNotFoundException;
+	public boolean updateTaskStatus(int id, String status) throws SQLException, ClassNotFoundException;
 }

@@ -167,7 +167,8 @@ public class JDBConnection implements DBConnection{
 		   logger.info("Task inserted successfully");
 	 }
 	
-	public boolean updateTaskStatus(int id) throws SQLException, ClassNotFoundException{
+	@Override
+	public boolean updateTaskStatus(int id, String status) throws SQLException, ClassNotFoundException{
 			Connection c = null;
 		   Statement stmt = null;
 		      
@@ -179,7 +180,7 @@ public class JDBConnection implements DBConnection{
 	       
 	       stmt = c.createStatement();
 	       
-	       String sql = "UPDATE task SET status='planned' WHERE id="+id+";";
+	       String sql = "UPDATE task SET status='"+status+"' WHERE id="+id+";";
 	       
 	       stmt.executeUpdate(sql);
 	       

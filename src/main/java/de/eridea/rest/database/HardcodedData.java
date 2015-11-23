@@ -42,7 +42,7 @@ public class HardcodedData implements DBConnection{
 	}
 
 	@Override
-	public boolean updateTaskStatus(int id) throws SQLException,
+	public boolean updateTaskStatus(int id, String status) throws SQLException,
 			ClassNotFoundException {
 		// TODO Auto-generated method stub
 		return false;
