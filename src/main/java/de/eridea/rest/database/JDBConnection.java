@@ -177,6 +177,15 @@ public class JDBConnection implements DBConnection{
 		   c.setAutoCommit(false);
 		   
 		   logger.info("Opened database successfully (updateTaskStatus)");
+		   
+		   stmt = c.createStatement();
+	       ResultSet rs = stmt.executeQuery( "SELECT * FROM task WHERE id="+id+";" );
+	       rs.next();
+	       
+	       if(rs.getString("status").equals(status))
+	       {
+	    	   return false;
+	       }
 	       
 	       stmt = c.createStatement();
 	       

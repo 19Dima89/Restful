@@ -178,7 +178,7 @@ public class RestService {
 			logger.info("Could not convert request body json to prb");
 		}
 		
-		if(prb == null || !prb.getStatus().equals("open") || !prb.getStatus().equals("planned"))
+		if(prb == null)
 		{
 			logger.info("Wrong request body -> Response status 400 (putStatus)");
 			
