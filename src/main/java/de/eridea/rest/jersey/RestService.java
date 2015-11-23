@@ -3,8 +3,10 @@ package de.eridea.rest.jersey;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -156,6 +158,33 @@ public class RestService {
 		}
 	}
 	
+	@PUT
+	@Path("/tasks/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response putStatus(@PathParam("id") int id)
+	{
+		boolean statusChanged = false;
+		
+		try
+		{
+			statusChanged = dbInterface.updateTaskStatus(id);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		if(statusChanged)
+		{
+			return Response.status(200).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").build();
+		}
+		else
+		{
+			return Response.status(404).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").build();
+		}
+		
+		
+	}
 	/**
 	 * Converts an ArrayList of DetailedTask to an ArrayList of simple Tasks.
 	 *

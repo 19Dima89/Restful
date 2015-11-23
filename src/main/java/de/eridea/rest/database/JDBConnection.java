@@ -166,4 +166,27 @@ public class JDBConnection implements DBConnection{
 		   
 		   logger.info("Task inserted successfully");
 	 }
+	
+	public boolean updateTaskStatus(int id) throws SQLException, ClassNotFoundException{
+			Connection c = null;
+		   Statement stmt = null;
+		      
+		   Class.forName("org.postgresql.Driver");
+		   c = DriverManager.getConnection(dataBaseLocation, dataBaseUser, dataBasePassword);
+		   c.setAutoCommit(false);
+		   
+		   logger.info("Opened database successfully (insertTask)");
+	       
+	       stmt = c.createStatement();
+	       
+	       String sql = "UPDATE task SET status='planned' WHERE id="+id+";";
+	       
+	       stmt.executeUpdate(sql);
+	       
+	       stmt.close();
+	       c.commit();
+	       c.close();
+		   
+	       return true;
+	}
 }

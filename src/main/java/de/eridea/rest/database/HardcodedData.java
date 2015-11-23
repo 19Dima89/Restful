@@ -1,5 +1,6 @@
 package de.eridea.rest.database;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import de.eridea.rest.types.DetailedTask;
@@ -38,6 +39,13 @@ public class HardcodedData implements DBConnection{
 	public void insertTask(DetailedTask dt){
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean updateTaskStatus(int id) throws SQLException,
+			ClassNotFoundException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

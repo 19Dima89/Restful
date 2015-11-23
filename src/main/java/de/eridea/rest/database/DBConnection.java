@@ -40,4 +40,6 @@ public interface DBConnection {
 	 * @throws ClassNotFoundException Signals that a class was not found.
 	 */
 	public void insertTask(DetailedTask dt) throws SQLException, ClassNotFoundException;
+	
+	public boolean updateTaskStatus(int id) throws SQLException, ClassNotFoundException;
 }
