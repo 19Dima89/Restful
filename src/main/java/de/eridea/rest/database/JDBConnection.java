@@ -38,6 +38,9 @@ public class JDBConnection implements DBConnection{
 	/**  PostgreSQL database password. */
 	static final String dataBasePassword = "Eridea42";
 	
+	/** The Constant JDBConnection image directory URI. */
+	static final String imageDirectoryURI = "/opt/tomcat/webapps/images/";
+	
 	/**
 	 * Fetch all task from the PostgreSQL Database.
 	 *
@@ -221,9 +224,8 @@ public class JDBConnection implements DBConnection{
 	 */
 	@Override
 	public File getImage(int id) {
-		
-		String baseURI = "/opt/tomcat/webapps/images/";
-		File returnValue = new File(baseURI+id+".png");
+
+		File returnValue = new File(imageDirectoryURI+id+".png");
 		
 		if(returnValue.exists() && !returnValue.isDirectory()) { 
 		    return returnValue;
