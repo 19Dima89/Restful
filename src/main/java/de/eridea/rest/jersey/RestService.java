@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
 
@@ -234,6 +235,25 @@ public class RestService {
 		}
 		
 		
+	}
+	
+	/**
+	 * Gets a single image from the server based on its name.
+	 *
+	 * @param id 		the image id
+	 * @return HTTP Response for an image download.
+	 */
+	@GET
+	@Path("/image/{id}")
+	@Produces("image/png")
+	public Response getImage(@PathParam("id") int id)
+	{
+		
+		ResponseBuilder response = Response.ok((Object) dbInterface.getImage(id));
+		response.header("Content-Disposition",
+			"attachment; filename="+id+".png").header("Access-Control-Allow-Origin", "*")
+		.header("Access-Control-Allow-Methods", "GET");
+		return response.build();
 	}
 	
 	/**

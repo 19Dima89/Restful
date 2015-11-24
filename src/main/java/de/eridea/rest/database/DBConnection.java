@@ -1,5 +1,6 @@
 package de.eridea.rest.database;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -52,4 +53,13 @@ public interface DBConnection {
 	 * @throws ClassNotFoundException the class not found exception
 	 */
 	public boolean updateTaskStatus(int id, String status) throws SQLException, ClassNotFoundException;
+	
+	
+	/**
+	 * Gets the URI of an image on the server with the specified id.
+	 *
+	 * @param id 	the image id
+	 * @return the image URI
+	 */
+	public File getImage(int id);
 }

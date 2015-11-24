@@ -1,5 +1,6 @@
 package de.eridea.rest.database;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -49,6 +50,15 @@ public class HardcodedData implements DBConnection{
 			ClassNotFoundException {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.eridea.rest.database.DBConnection#getImage(int)
+	 */
+	@Override
+	public File getImage(int id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

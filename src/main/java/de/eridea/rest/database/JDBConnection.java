@@ -1,5 +1,6 @@
 package de.eridea.rest.database;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -209,5 +210,27 @@ public class JDBConnection implements DBConnection{
 	       logger.info("Task Status changed to planned");
 		   
 	       return true;
+	}
+
+	
+	/**
+	 * Gets the URI of an image on the server with the specified id.
+	 *
+	 * @param id 	the image id
+	 * @return the image URI
+	 */
+	@Override
+	public File getImage(int id) {
+		
+		String baseURI = "/opt/tomcat/webapps/images/";
+		File returnValue = new File(baseURI+id+".png");
+		
+		if(returnValue.exists() && !returnValue.isDirectory()) { 
+		    return returnValue;
+		}
+		else
+		{
+			return null;
+		}
 	}
 }
