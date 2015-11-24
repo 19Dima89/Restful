@@ -13,7 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBElement;
 
 import org.apache.log4j.Logger;
 
@@ -48,7 +47,7 @@ public class RestService {
 	 * Responds to a GET-Request, by listing all available tasks.
 	 *
 	 * @param longitude 	longitude of a task
-	 * @param latitude 	latitude of a task
+	 * @param latitude 		latitude of a task
 	 * @param maxResults 	max number of results inside the response
 	 * @return Response 	HTTP Response, which contains all tasks (limited by maxResults) and the status-code 200 (if task found)
 	 * 			or the status-code 404 (if task is not found)	
@@ -160,6 +159,13 @@ public class RestService {
 		}
 	}
 	
+	/**
+	 * Changes the status of the task with the specified ID to a specified value.
+	 *
+	 * @param requestBody 		the PUT-Request body
+	 * @param id 				the id of the task whos status should be changed 
+	 * @return HTTP response (statuscode 200, if status changed otherwise statuscode 400)
+	 */
 	@PUT
 	@Path("/tasks/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -229,6 +235,7 @@ public class RestService {
 		
 		
 	}
+	
 	/**
 	 * Converts an ArrayList of DetailedTask to an ArrayList of simple Tasks.
 	 *

@@ -41,6 +41,9 @@ public class HardcodedData implements DBConnection{
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see de.eridea.rest.database.DBConnection#updateTaskStatus(int, java.lang.String)
+	 */
 	@Override
 	public boolean updateTaskStatus(int id, String status) throws SQLException,
 			ClassNotFoundException {

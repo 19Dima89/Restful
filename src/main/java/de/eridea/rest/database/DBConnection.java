@@ -41,5 +41,15 @@ public interface DBConnection {
 	 */
 	public void insertTask(DetailedTask dt) throws SQLException, ClassNotFoundException;
 	
+	
+	/**
+	 * Changes the task status of a specified task to a sepecified value.
+	 *
+	 * @param id 			the task id
+	 * @param status 		the value to which the status should be changed
+	 * @return true, if successful
+	 * @throws SQLException the SQL exception
+	 * @throws ClassNotFoundException the class not found exception
+	 */
 	public boolean updateTaskStatus(int id, String status) throws SQLException, ClassNotFoundException;
 }

@@ -25,16 +25,16 @@ import de.eridea.rest.types.Item;
  */
 public class JDBConnection implements DBConnection{
 	
-	/** Logger instance */
+	/**  Logger instance. */
 	static final Logger logger = Logger.getRootLogger();
 	
-	/** PostgreSQL database connection */
+	/**  PostgreSQL database connection. */
 	static final String dataBaseLocation = "jdbc:postgresql://localhost:5432/mss";
 	
-	/** PostgreSQL database user */
+	/**  PostgreSQL database user. */
 	static final String dataBaseUser = "postgres";
 	
-	/** PostgreSQL database password */
+	/**  PostgreSQL database password. */
 	static final String dataBasePassword = "Eridea42";
 	
 	/**
@@ -167,9 +167,18 @@ public class JDBConnection implements DBConnection{
 		   logger.info("Task inserted successfully");
 	 }
 	
+	/**
+	 * Changes the task status of a specified task to a sepecified value inside a PostgreSQL DB.
+	 *
+	 * @param id 			the task id
+	 * @param status 		the value to which the status should be changed
+	 * @return true, if successful
+	 * @throws SQLException the SQL exception
+	 * @throws ClassNotFoundException the class not found exception
+	 */
 	@Override
 	public boolean updateTaskStatus(int id, String status) throws SQLException, ClassNotFoundException{
-			Connection c = null;
+		   Connection c = null;
 		   Statement stmt = null;
 		      
 		   Class.forName("org.postgresql.Driver");
