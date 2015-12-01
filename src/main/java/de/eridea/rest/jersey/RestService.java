@@ -264,6 +264,13 @@ public class RestService {
 		return response.build();
 	}
 	
+	/**
+	 * Upload a file to the servers images directory.
+	 *
+	 * @param uploadedInputStream 		input stream of the uploaded file.
+	 * @param fileDetail 				meta-data of the uploaded file.
+	 * @return HTTP Response for the file upload.
+	 */
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -273,16 +280,21 @@ public class RestService {
 
 		String uploadedFileLocation = "/opt/tomcat/webapps/images/" + fileDetail.getFileName();
 
-		// save it
+		// save the file to the specified directory
 		writeToFile(uploadedInputStream, uploadedFileLocation);
 
 		String output = "File uploaded to : " + uploadedFileLocation;
 
-		return Response.status(200).entity(output).build();
-
+		return Response.status(200).entity(output).header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Methods", "POST").build();
 	}
 
-	// save uploaded file to new location
+	/**
+	 * Save a file to the directory specified in @param uploadedFileLocation.
+	 *
+	 * @param uploadedInputStream the RestService uploaded input stream
+	 * @param uploadedFileLocation the RestService uploaded file location
+	 */
 	private void writeToFile(InputStream uploadedInputStream,
 		String uploadedFileLocation) {
 
@@ -302,7 +314,6 @@ public class RestService {
 
 			e.printStackTrace();
 		}
-
 	}
 	
 	/**
