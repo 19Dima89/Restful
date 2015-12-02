@@ -46,6 +46,9 @@ public class RestService {
 	/** Logger instance. */
 	private static final Logger logger = Logger.getRootLogger();
 	
+	/** Image directory of the server. */
+	public static final String imageDirectory = "/opt/tomcat/webapps/images/";
+	
 	/** Gson builder. */
 	private Gson gson = new GsonBuilder().create();
 	
@@ -241,8 +244,6 @@ public class RestService {
 			return Response.status(400).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "PUT").build();
 		}
-		
-		
 	}
 	
 	/**
@@ -257,11 +258,28 @@ public class RestService {
 	public Response getImage(@PathParam("id") int id)
 	{
 		
-		ResponseBuilder response = Response.ok((Object) dbInterface.getImage(id));
-		response.header("Content-Disposition",
-			"attachment; filename="+id+".png").header("Access-Control-Allow-Origin", "*")
-		.header("Access-Control-Allow-Methods", "GET");
-		return response.build();
+		File responseEntity = dbInterface.getImage(id);
+		
+		if(responseEntity != null)
+		{
+			ResponseBuilder response = Response.ok((Object) responseEntity);
+			response.header("Content-Disposition", "attachment; filename="+id+".png")
+			.header("Access-Control-Allow-Origin", "*")
+			.header("Access-Control-Allow-Methods", "GET");
+			
+			return response.build();
+		}
+		else
+		{
+			ResponseBuilder response = Response.ok((Object) responseEntity);
+			response.header("Content-Disposition", "attachment; filename="+id+".png")
+			.header("Access-Control-Allow-Origin", "*")
+			.header("Access-Control-Allow-Methods", "GET");
+			
+			return response.build();
+		}
+		
+		
 	}
 	
 	/**
@@ -278,7 +296,7 @@ public class RestService {
 		@FormDataParam("file") InputStream uploadedInputStream,
 		@FormDataParam("file") FormDataContentDisposition fileDetail) {
 
-		String uploadedFileLocation = "/opt/tomcat/webapps/images/" + fileDetail.getFileName();
+		String uploadedFileLocation = imageDirectory + fileDetail.getFileName();
 
 		// save the file to the specified directory
 		writeToFile(uploadedInputStream, uploadedFileLocation);

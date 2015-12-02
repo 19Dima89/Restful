@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import de.eridea.rest.jersey.RestService;
 import de.eridea.rest.types.DetailedTask;
 import de.eridea.rest.types.Item;
 
@@ -37,9 +38,6 @@ public class JDBConnection implements DBConnection{
 	
 	/**  PostgreSQL database password. */
 	static final String dataBasePassword = "Eridea42";
-	
-	/** The Constant JDBConnection image directory URI. */
-	static final String imageDirectoryURI = "/opt/tomcat/webapps/images/";
 	
 	/**
 	 * Fetch all task from the PostgreSQL Database.
@@ -225,7 +223,7 @@ public class JDBConnection implements DBConnection{
 	@Override
 	public File getImage(int id) {
 
-		File returnValue = new File(imageDirectoryURI+id+".png");
+		File returnValue = new File(RestService.imageDirectory + id + ".png");
 		
 		if(returnValue.exists() && !returnValue.isDirectory()) { 
 		    return returnValue;
