@@ -47,12 +47,14 @@ public class RestService {
 	
 	/** Image directory of the server. */
 	public static final String imageDirectory = "/opt/tomcat/webapps/images/";
+	//public static final String imageDirectory = "/opt/apache-tomcat-7.0.65/webapps/images/";
 	
 	/** Gson builder. */
 	private Gson gson = new GsonBuilder().create();
 	
 	/** Database interaction. */
 	private DBConnection dbInterface = new JDBConnection();
+	//private DBConnection dbInterface = new HardcodedData();
 	
 	/**
 	 * Responds to a GET-Request, by listing all available tasks.

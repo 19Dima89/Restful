@@ -66,6 +66,15 @@ public class Task {
 	public String getStatus() {
 		return status;
 	}
+	
+	/**
+	 * Sets the status.
+	 *
+	 * @param status 	The new status
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	/**
 	 * Gets the location (street).
