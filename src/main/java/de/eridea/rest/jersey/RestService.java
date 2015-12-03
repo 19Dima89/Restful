@@ -19,7 +19,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
 
@@ -47,7 +46,8 @@ public class RestService {
 	private static final Logger logger = Logger.getRootLogger();
 	
 	/** Image directory of the server. */
-	public static final String imageDirectory = "/opt/tomcat/webapps/images/";
+	//public static final String imageDirectory = "/opt/tomcat/webapps/images/";
+	public static final String imageDirectory = "/opt/apache-tomcat-7.0.65/webapps/images/";
 	
 	/** Gson builder. */
 	private Gson gson = new GsonBuilder().create();
@@ -131,12 +131,6 @@ public class RestService {
 		logger.info("Received GET-Request to display the details of the task with the ID "+id);
 		
 		DetailedTask output = null;
-		
-		/*DetailedTask dt = new DetailedTask(1239, "Wartung Maschine 1234", 47.852967, 12.124801, 
-		 		"open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), 
-				new Item("9875", "Generator")), 83022, "Rosenheim", "Hochschulestr. 1", 
-		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"}, 
-		 		new long[]{123, 456}, "12.12.2015", "12.10.2015");*/
 		
 		try 
 		{
@@ -257,29 +251,24 @@ public class RestService {
 	@Produces("image/png")
 	public Response getImage(@PathParam("id") int id)
 	{
+		logger.info("Received GET-Request to download the file with the name "+id+".png");
 		
 		File responseEntity = dbInterface.getImage(id);
 		
 		if(responseEntity != null)
 		{
-			ResponseBuilder response = Response.ok((Object) responseEntity);
-			response.header("Content-Disposition", "attachment; filename="+id+".png")
-			.header("Access-Control-Allow-Origin", "*")
-			.header("Access-Control-Allow-Methods", "GET");
+			logger.info("File "+id+".png exists on this server! Response with the status-code 200 and the attached file.");
 			
-			return response.build();
+			return Response.ok((Object) responseEntity).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "GET").build();
 		}
 		else
 		{
-			ResponseBuilder response = Response.ok((Object) responseEntity);
-			response.header("Content-Disposition", "attachment; filename="+id+".png")
-			.header("Access-Control-Allow-Origin", "*")
-			.header("Access-Control-Allow-Methods", "GET");
+			logger.info("File "+id+".png not found on this server! Response with the status-code 400.");
 			
-			return response.build();
+			return Response.status(404).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "GET").build();
 		}
-		
-		
 	}
 	
 	/**
@@ -295,16 +284,33 @@ public class RestService {
 	public Response uploadFile(
 		@FormDataParam("file") InputStream uploadedInputStream,
 		@FormDataParam("file") FormDataContentDisposition fileDetail) {
-
+		
+		logger.info("Received POST-Request to upload a file with the name "+fileDetail.getFileName());
+		
+		boolean uploadSuccessful = false;
+		
 		String uploadedFileLocation = imageDirectory + fileDetail.getFileName();
 
-		// save the file to the specified directory
-		writeToFile(uploadedInputStream, uploadedFileLocation);
-
-		String output = "File uploaded to : " + uploadedFileLocation;
-
-		return Response.status(200).entity(output).header("Access-Control-Allow-Origin", "*")
-				.header("Access-Control-Allow-Methods", "POST").build();
+		uploadSuccessful = writeToFile(uploadedInputStream, uploadedFileLocation);
+		
+		if(uploadSuccessful)
+		{
+			logger.info("File "+fileDetail.getFileName()+" uploaded successfully!");
+			
+			String output = "File uploaded to : " + uploadedFileLocation;
+	
+			return Response.status(200).entity(output).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "POST").build();
+		}
+		else
+		{
+			logger.info("File "+fileDetail.getFileName()+" not uploaded due to an IOException!");
+			
+			String output = "File uploaded failed!";
+			
+			return Response.status(500).entity(output).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "POST").build();
+		}
 	}
 
 	/**
@@ -313,10 +319,11 @@ public class RestService {
 	 * @param uploadedInputStream the RestService uploaded input stream
 	 * @param uploadedFileLocation the RestService uploaded file location
 	 */
-	private void writeToFile(InputStream uploadedInputStream,
+	private boolean writeToFile(InputStream uploadedInputStream,
 		String uploadedFileLocation) {
 
-		try {
+		try 
+		{
 			OutputStream out = new FileOutputStream(new File(
 					uploadedFileLocation));
 			int read = 0;
@@ -328,9 +335,12 @@ public class RestService {
 			}
 			out.flush();
 			out.close();
-		} catch (IOException e) {
-
-			e.printStackTrace();
+			
+			return true;
+		} 
+		catch (IOException e) 
+		{
+			return false;
 		}
 	}
 	
