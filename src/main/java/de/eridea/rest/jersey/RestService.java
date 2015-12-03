@@ -46,8 +46,7 @@ public class RestService {
 	private static final Logger logger = Logger.getRootLogger();
 	
 	/** Image directory of the server. */
-	//public static final String imageDirectory = "/opt/tomcat/webapps/images/";
-	public static final String imageDirectory = "/opt/apache-tomcat-7.0.65/webapps/images/";
+	public static final String imageDirectory = "/opt/tomcat/webapps/images/";
 	
 	/** Gson builder. */
 	private Gson gson = new GsonBuilder().create();
@@ -225,15 +224,15 @@ public class RestService {
 		
 		if(statusChanged)
 		{
-			logger.info("Status of task "+id+" changed to planned -> Response Status 200 (putStatus)");
+			logger.info("Status of task "+id+" changed to "+prb.getStatus()+" -> Response Status 200 (putStatus)");
 			
 			return Response.status(200).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "PUT").build();
 		}
 		else
 		{
-			logger.info("Status of task "+id+" does not need to be changed, because it is already on planned"
-					+ "-> Response status 400 (putStatus");
+			logger.info("Status of task "+id+" does not need to be changed, because it is already on "+prb.getStatus()
+					+ " -> Response status 400 (putStatus");
 			
 			return Response.status(400).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "PUT").build();
