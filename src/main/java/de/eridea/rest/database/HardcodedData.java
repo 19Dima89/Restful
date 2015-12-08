@@ -116,4 +116,24 @@ public class HardcodedData implements DBConnection{
 		 		new long[]{123, 456}, "12.12.2015", "12.10.2015"));
 	}
 
+	/**
+	 * Gets the URI of a document with the specified.
+	 *
+	 * @param name 		the document name.
+	 * @return the document URI
+	 */
+	@Override
+	public File getDocument(String name) {
+		
+		File returnValue = new File(RestService.documentDirectory + name + ".pdf");
+		
+		if(returnValue.exists() && !returnValue.isDirectory()) { 
+		    return returnValue;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 }

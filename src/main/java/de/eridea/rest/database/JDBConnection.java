@@ -215,7 +215,7 @@ public class JDBConnection implements DBConnection{
 
 	
 	/**
-	 * Gets the URI of an image on the server with the specified id.
+	 * Gets the URI of an image with the specified id from the server.
 	 *
 	 * @param id 	the image id
 	 * @return the image URI
@@ -224,6 +224,26 @@ public class JDBConnection implements DBConnection{
 	public File getImage(int id) {
 
 		File returnValue = new File(RestService.imageDirectory + id + ".png");
+		
+		if(returnValue.exists() && !returnValue.isDirectory()) { 
+		    return returnValue;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the URI of a document with the specified name from the server.
+	 *
+	 * @param name 		the document name.
+	 * @return the document URI
+	 */
+	@Override
+	public File getDocument(String name) {
+		
+		File returnValue = new File(RestService.documentDirectory + name + ".pdf");
 		
 		if(returnValue.exists() && !returnValue.isDirectory()) { 
 		    return returnValue;

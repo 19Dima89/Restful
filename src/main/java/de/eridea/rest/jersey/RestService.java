@@ -49,6 +49,9 @@ public class RestService {
 	public static final String imageDirectory = "/opt/tomcat/webapps/images/";
 	//public static final String imageDirectory = "/opt/apache-tomcat-7.0.65/webapps/images/";
 	
+	/** Document directory of the server. */
+	public static final String documentDirectory = "/opt/tomcat/webapps/documents/";
+	
 	/** Gson builder. */
 	private Gson gson = new GsonBuilder().create();
 	
@@ -63,7 +66,7 @@ public class RestService {
 	 * @param latitude 		latitude of a task
 	 * @param maxResults 	max number of results inside the response
 	 * @return Response 	HTTP Response, which contains all tasks (limited by maxResults) and the status-code 200 (if task found)
-	 * 			or the status-code 404 (if task is not found)	
+	 * 						or the status-code 404 (if task is not found)	
 	 */
 	@GET
 	@Path("/tasks")
@@ -273,16 +276,16 @@ public class RestService {
 	}
 	
 	/**
-	 * Upload a file to the servers images directory.
+	 * Upload an image to the servers images directory.
 	 *
-	 * @param uploadedInputStream 		input stream of the uploaded file.
-	 * @param fileDetail 				meta-data of the uploaded file.
-	 * @return HTTP Response for the file upload.
+	 * @param uploadedInputStream 		input stream of the uploaded image.
+	 * @param fileDetail 				meta-data of the uploaded image.
+	 * @return HTTP Response for the image upload.
 	 */
 	@POST
 	@Path("/imgupload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response uploadFile(
+	public Response uploadImage(
 		@FormDataParam("img") InputStream uploadedInputStream,
 		@FormDataParam("img") FormDataContentDisposition fileDetail) {
 		
@@ -313,12 +316,86 @@ public class RestService {
 					.header("Access-Control-Allow-Methods", "POST").build();
 		}
 	}
+	
+	/**
+	 * Gets a single document from the server based on its name.
+	 *
+	 * @param name 		the name of the document
+	 * @return HTTP Response for a document download.
+	 */
+	@GET
+	@Path("/document/{name}")
+	@Produces(MediaType.MULTIPART_FORM_DATA)
+	public Response getDocument(@PathParam("name") String name)
+	{
+		logger.info("Received GET-Request to download the file with the name "+name+".png");
+		
+		File responseEntity = dbInterface.getDocument(name);
+		
+		if(responseEntity != null)
+		{
+			logger.info("File "+name+".pdf exists on this server! Response with the status-code 200 and the attached file.");
+			
+			return Response.ok((Object) responseEntity).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "GET").build();
+		}
+		else
+		{
+			logger.info("File "+name+".pdf not found on this server! Response with the status-code 400.");
+			
+			return Response.status(404).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "GET").build();
+		}
+	}
+	
+	/**
+	 * Upload a single document to the servers document directory.
+	 *
+	 * @param uploadedInputStream 		input stream of the uploaded document.
+	 * @param fileDetail 				meta-data of the uploaded document.
+	 * @return HTTP Response for the document upload.
+	 */
+	@POST
+	@Path("/docupload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadDoc(
+			@FormDataParam("doc") InputStream uploadedInputStream,
+			@FormDataParam("doc") FormDataContentDisposition fileDetail)
+	{
+		logger.info("Received POST-Request to upload a document with the name "+fileDetail.getFileName());
+		
+		boolean uploadSuccessful = false;
+		
+		String uploadedFileLocation = documentDirectory + fileDetail.getFileName();
+
+		uploadSuccessful = writeToFile(uploadedInputStream, uploadedFileLocation);
+		
+		if(uploadSuccessful)
+		{
+			logger.info("File "+fileDetail.getFileName()+" uploaded successfully!");
+			
+			String output = "File uploaded!";
+	
+			return Response.status(200).entity(output).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "POST").build();
+		}
+		else
+		{
+			logger.info("File "+fileDetail.getFileName()+" not uploaded due to an IOException!");
+			
+			String output = "File upload failed!";
+			
+			return Response.status(500).entity(output).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "POST").build();
+		}
+	}
 
 	/**
 	 * Save a file to the directory specified in @param uploadedFileLocation.
 	 *
 	 * @param uploadedInputStream the RestService uploaded input stream
 	 * @param uploadedFileLocation the RestService uploaded file location
+	 * @return true, if successful
 	 */
 	private boolean writeToFile(InputStream uploadedInputStream,
 		String uploadedFileLocation) {
