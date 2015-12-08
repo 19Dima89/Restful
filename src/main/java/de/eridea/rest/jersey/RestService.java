@@ -280,11 +280,11 @@ public class RestService {
 	 * @return HTTP Response for the file upload.
 	 */
 	@POST
-	@Path("/upload")
+	@Path("/imgupload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadFile(
-		@FormDataParam("file") InputStream uploadedInputStream,
-		@FormDataParam("file") FormDataContentDisposition fileDetail) {
+		@FormDataParam("img") InputStream uploadedInputStream,
+		@FormDataParam("img") FormDataContentDisposition fileDetail) {
 		
 		logger.info("Received POST-Request to upload a file with the name "+fileDetail.getFileName());
 		
@@ -298,7 +298,7 @@ public class RestService {
 		{
 			logger.info("File "+fileDetail.getFileName()+" uploaded successfully!");
 			
-			String output = "File uploaded to : " + uploadedFileLocation;
+			String output = "File uploaded!";
 	
 			return Response.status(200).entity(output).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "POST").build();
@@ -307,7 +307,7 @@ public class RestService {
 		{
 			logger.info("File "+fileDetail.getFileName()+" not uploaded due to an IOException!");
 			
-			String output = "File uploaded failed!";
+			String output = "File upload failed!";
 			
 			return Response.status(500).entity(output).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "POST").build();
