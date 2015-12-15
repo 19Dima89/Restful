@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -46,11 +48,12 @@ public class RestService {
 	private static final Logger logger = Logger.getRootLogger();
 	
 	/** Image directory of the server. */
-	public static final String imageDirectory = "/opt/tomcat/webapps/images/";
-	//public static final String imageDirectory = "/opt/apache-tomcat-7.0.65/webapps/images/";
+	//public static final String imageDirectory = "/opt/tomcat/webapps/images/";
+	public static final String imageDirectory = "/opt/apache-tomcat-7.0.65/webapps/images/";
 	
 	/** Document directory of the server. */
-	public static final String documentDirectory = "/opt/tomcat/webapps/documents/";
+	//public static final String documentDirectory = "/opt/tomcat/webapps/documents/";
+	public static final String documentDirectory = "/opt/apache-tomcat-7.0.65/webapps/documents/";
 	
 	/** Gson builder. */
 	private Gson gson = new GsonBuilder().create();
@@ -139,6 +142,7 @@ public class RestService {
 		try 
 		{
 			output = dbInterface.selectTask(id);
+			output.setDocuments(getDocumentList(id, documentDirectory));
 		} 
 		catch (SQLException e) 
 		{
@@ -251,24 +255,24 @@ public class RestService {
 	 * @return HTTP Response for an image download.
 	 */
 	@GET
-	@Path("/image/{id}")
+	@Path("/tasks/{task_id}/images/{img_id}")
 	@Produces("image/png")
-	public Response getImage(@PathParam("id") int id)
+	public Response getImage(@PathParam("task_id") int task_id, @PathParam("img_id") long img_id)
 	{
-		logger.info("Received GET-Request to download the file with the name "+id+".png");
+		logger.info("Received GET-Request to download the file with the name "+task_id+"_"+img_id);
 		
-		File responseEntity = dbInterface.getImage(id);
+		File responseEntity = dbInterface.getImage(task_id+"_"+img_id);
 		
 		if(responseEntity != null)
 		{
-			logger.info("File "+id+".png exists on this server! Response with the status-code 200 and the attached file.");
+			logger.info("File "+task_id+"_"+img_id+" exists on this server! Response with the status-code 200 and the attached file.");
 			
 			return Response.ok((Object) responseEntity).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "GET").build();
 		}
 		else
 		{
-			logger.info("File "+id+".png not found on this server! Response with the status-code 400.");
+			logger.info("File "+task_id+"_"+img_id+" not found on this server! Response with the status-code 400.");
 			
 			return Response.status(404).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "GET").build();
@@ -283,19 +287,28 @@ public class RestService {
 	 * @return HTTP Response for the image upload.
 	 */
 	@POST
-	@Path("/imgupload")
+	@Path("/tasks/{id}/images")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadImage(
 		@FormDataParam("img") InputStream uploadedInputStream,
-		@FormDataParam("img") FormDataContentDisposition fileDetail) {
+		@FormDataParam("img") FormDataContentDisposition fileDetail,
+		@PathParam("id") int id) {
 		
 		logger.info("Received POST-Request to upload a file with the name "+fileDetail.getFileName());
 		
+		String extension = getFormat(fileDetail.getFileName());
+		
 		boolean uploadSuccessful = false;
 		
-		String uploadedFileLocation = imageDirectory + fileDetail.getFileName();
-
-		uploadSuccessful = writeToFile(uploadedInputStream, uploadedFileLocation);
+		if(extension != null && !extension.equals("PDF"))
+		{
+			Calendar calendar = Calendar.getInstance();
+			long imgID = calendar.getTimeInMillis();
+			
+			String uploadedFileLocation = imageDirectory + id+"_"+imgID+"."+extension.toLowerCase();
+	
+			uploadSuccessful = writeToFile(uploadedInputStream, uploadedFileLocation);
+		}
 		
 		if(uploadSuccessful)
 		{
@@ -324,24 +337,24 @@ public class RestService {
 	 * @return HTTP Response for a document download.
 	 */
 	@GET
-	@Path("/document/{name}")
+	@Path("/tasks/{task_id}/documents/{doc_id}")
 	@Produces(MediaType.MULTIPART_FORM_DATA)
-	public Response getDocument(@PathParam("name") String name)
+	public Response getDocument(@PathParam("task_id") int task_id, @PathParam("doc_id") long doc_id)
 	{
-		logger.info("Received GET-Request to download the file with the name "+name+".png");
+		logger.info("Received GET-Request to download the file with the name "+task_id+"_"+doc_id);
 		
-		File responseEntity = dbInterface.getDocument(name);
+		File responseEntity = dbInterface.getDocument(task_id+"_"+doc_id);
 		
 		if(responseEntity != null)
 		{
-			logger.info("File "+name+".pdf exists on this server! Response with the status-code 200 and the attached file.");
+			logger.info("File "+task_id+"_"+doc_id+" exists on this server! Response with the status-code 200 and the attached file.");
 			
 			return Response.ok((Object) responseEntity).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "GET").build();
 		}
 		else
 		{
-			logger.info("File "+name+".pdf not found on this server! Response with the status-code 400.");
+			logger.info("File "+task_id+"_"+doc_id+" not found on this server! Response with the status-code 400.");
 			
 			return Response.status(404).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "GET").build();
@@ -356,19 +369,28 @@ public class RestService {
 	 * @return HTTP Response for the document upload.
 	 */
 	@POST
-	@Path("/docupload")
+	@Path("/tasks/{id}/documents")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadDoc(
 			@FormDataParam("doc") InputStream uploadedInputStream,
-			@FormDataParam("doc") FormDataContentDisposition fileDetail)
+			@FormDataParam("doc") FormDataContentDisposition fileDetail,
+			@PathParam("id") int id)
 	{
 		logger.info("Received POST-Request to upload a document with the name "+fileDetail.getFileName());
 		
+		String extension = getFormat(fileDetail.getFileName());
+		
 		boolean uploadSuccessful = false;
 		
-		String uploadedFileLocation = documentDirectory + fileDetail.getFileName();
-
-		uploadSuccessful = writeToFile(uploadedInputStream, uploadedFileLocation);
+		if(extension.equals("PDF"))
+		{
+			Calendar calendar = Calendar.getInstance();
+			long docID = calendar.getTimeInMillis();
+			
+			String uploadedFileLocation = documentDirectory + id+"_"+docID+".pdf";
+	
+			uploadSuccessful = writeToFile(uploadedInputStream, uploadedFileLocation);
+		}
 		
 		if(uploadSuccessful)
 		{
@@ -457,5 +479,72 @@ public class RestService {
 		}
 		
 		return temp;
+	}
+	
+	public String getFormat(String imageName)
+	{
+	    String temp = new String(imageName);
+	    temp.toLowerCase();
+
+	    if(temp.endsWith(".png"))
+	    {
+	    	return "PNG";
+	    }
+	    else if(temp.endsWith(".jpg") || temp.endsWith("jpeg"))
+	    {
+	    	return "JPEG";
+	    }
+	    else if(temp.endsWith(".pdf"))
+	    {
+	    	return "PDF";
+	    }
+	    else
+	    {
+	    	return null;
+	    }
+	        
+	}
+	
+	private List<String> getDocumentList(int taskID, String path)
+	{
+		ArrayList<String> returnValue = new ArrayList<String>();
+		
+		File[] listOfFiles = new File(path).listFiles();
+		
+		for(int i=0;i<listOfFiles.length;i++)
+		{
+			String[] explodedName = listOfFiles[i].getName().split("_");
+			
+			if(explodedName[0].equals(Integer.toString(taskID)))
+			{
+				returnValue.add(explodedName[1].substring(0, explodedName[1].length()-4));
+			}
+		}
+		
+		if(returnValue.isEmpty())
+		{
+			return null;
+		}
+		
+		return returnValue;
+	}
+	
+	@GET
+	@Path("/debugging/{id}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response debuggingGET(@PathParam("id") int id)
+	{
+		
+			StringBuilder sb = new StringBuilder();
+			List<String> res = getDocumentList(id, documentDirectory);
+			
+			for(int i=0;i<res.size(); i++)
+			{
+				sb.append(res.get(i)+"\n");
+			}
+		
+			return Response.status(200).entity(gson.toJson(sb.toString())).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "GET").build();
+		
 	}
 }

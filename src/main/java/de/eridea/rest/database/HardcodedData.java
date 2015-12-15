@@ -82,9 +82,9 @@ public class HardcodedData implements DBConnection{
 	 * @see de.eridea.rest.database.DBConnection#getImage(int)
 	 */
 	@Override
-	public File getImage(int id) {
+	public File getImage(String name) {
 		
-		File returnValue = new File(RestService.imageDirectory + id + ".png");
+		File returnValue = new File(RestService.imageDirectory + name + ".png");
 		
 		if(returnValue.exists() && !returnValue.isDirectory()) { 
 		    return returnValue;

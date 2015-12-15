@@ -31,7 +31,8 @@ public class JDBConnection implements DBConnection{
 	static final Logger logger = Logger.getRootLogger();
 	
 	/**  PostgreSQL database connection. */
-	static final String dataBaseLocation = "jdbc:postgresql://localhost:5432/mss";
+	//static final String dataBaseLocation = "jdbc:postgresql://localhost:5432/mss";
+	static final String dataBaseLocation = "jdbc:postgresql://192.168.178.204:5432/mss";
 	
 	/**  PostgreSQL database user. */
 	static final String dataBaseUser = "postgres";
@@ -221,16 +222,24 @@ public class JDBConnection implements DBConnection{
 	 * @return the image URI
 	 */
 	@Override
-	public File getImage(int id) {
+	public File getImage(String name) {
 
-		File returnValue = new File(RestService.imageDirectory + id + ".png");
+		File returnValue = new File(RestService.imageDirectory + name + ".png");
 		
 		if(returnValue.exists() && !returnValue.isDirectory()) { 
 		    return returnValue;
 		}
 		else
 		{
-			return null;
+			returnValue = new File(RestService.imageDirectory + name + ".jpeg");
+			
+			if(returnValue.exists() && !returnValue.isDirectory()) { 
+			    return returnValue;
+			}
+			else
+			{
+				return null;
+			}
 		}
 	}
 

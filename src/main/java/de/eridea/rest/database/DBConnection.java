@@ -61,7 +61,7 @@ public interface DBConnection {
 	 * @param id 	the image id
 	 * @return the image URI
 	 */
-	public File getImage(int id);
+	public File getImage(String name);
 	
 	/**
 	 * Gets the URI of a document on the server with the specified name.

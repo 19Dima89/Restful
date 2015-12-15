@@ -36,6 +36,8 @@ public class DetailedTask extends Task {
 	/** The DetailedTask eingangsdatum. */
 	private String eingangsdatum;
 	
+	private List<String> documents = null;
+	
 	/**
 	 * Instantiates a new detailed task.
 	 *
@@ -132,7 +134,14 @@ public class DetailedTask extends Task {
 		return items;
 	}
 	
-	
+	public List<String> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<String> documents) {
+		this.documents = documents;
+	}
+
 	/**
 	 * Converts the DetaildTask to a simple Task.
 	 *
