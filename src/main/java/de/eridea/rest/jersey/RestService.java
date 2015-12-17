@@ -299,7 +299,7 @@ public class RestService {
 		
 		logger.info("Received POST-Request to upload a file with the name "+fileDetail.getFileName());
 		
-		String extension = getFormat(fileDetail.getFileName());
+		String extension = getFileFormat(fileDetail.getFileName());
 		
 		boolean uploadSuccessful = false;
 		
@@ -383,7 +383,7 @@ public class RestService {
 	{
 		logger.info("Received POST-Request to upload a document with the name "+fileDetail.getFileName());
 		
-		String extension = getFormat(fileDetail.getFileName());
+		String extension = getFileFormat(fileDetail.getFileName());
 		
 		boolean uploadSuccessful = false;
 		
@@ -492,7 +492,7 @@ public class RestService {
 	 * @param imageName the RestService image name
 	 * @return the format
 	 */
-	public String getFormat(String imageName)
+	public String getFileFormat(String imageName)
 	{
 	    String temp = new String(imageName);
 	    temp.toLowerCase();
@@ -513,7 +513,6 @@ public class RestService {
 	    {
 	    	return null;
 	    }
-	        
 	}
 	
 	/**
