@@ -58,7 +58,7 @@ public interface DBConnection {
 	/**
 	 * Gets the URI of an image on the server with the specified id.
 	 *
-	 * @param id 	the image id
+	 * @param name 	the image id
 	 * @return the image URI
 	 */
 	public File getImage(String name);

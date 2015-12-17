@@ -31,8 +31,8 @@ public class JDBConnection implements DBConnection{
 	static final Logger logger = Logger.getRootLogger();
 	
 	/**  PostgreSQL database connection. */
-	//static final String dataBaseLocation = "jdbc:postgresql://localhost:5432/mss";
-	static final String dataBaseLocation = "jdbc:postgresql://192.168.178.204:5432/mss";
+	static final String dataBaseLocation = "jdbc:postgresql://localhost:5432/mss";
+	//static final String dataBaseLocation = "jdbc:postgresql://192.168.178.204:5432/mss";
 	
 	/**  PostgreSQL database user. */
 	static final String dataBaseUser = "postgres";
@@ -74,8 +74,7 @@ public class JDBConnection implements DBConnection{
 	    	   returnValue.add(new DetailedTask(rs.getInt("id"), rs.getString("description"), 
 	        		 rs.getDouble("latitude"), rs.getDouble("longitude"), rs.getString("status"), 
 	        		 items, rs.getInt("plz"), rs.getString("ort"), rs.getString("strasse"), rs.getString("typ"), 
-	        		 rs.getString("information"), gson.fromJson(rs.getString("hilfsmittel"), String[].class), 
-	        		 gson.fromJson(rs.getString("images"), long[].class), rs.getString("auftragsfrist"), 
+	        		 rs.getString("information"), gson.fromJson(rs.getString("hilfsmittel"), String[].class), rs.getString("auftragsfrist"), 
 	        		 rs.getString("eingangsdatum")));
 	       }
 
@@ -121,8 +120,8 @@ public class JDBConnection implements DBConnection{
 	       returnValue = new DetailedTask(rs.getInt("id"), rs.getString("description"), 
 	        		 rs.getDouble("latitude"), rs.getDouble("longitude"), rs.getString("status"), 
 	        		 items, rs.getInt("plz"), rs.getString("ort"), rs.getString("strasse"), rs.getString("typ"), 
-	        		 rs.getString("information"), gson.fromJson(rs.getString("hilfsmittel"), String[].class), 
-	        		 gson.fromJson(rs.getString("images"), long[].class), rs.getString("auftragsfrist"), 
+	        		 rs.getString("information"), gson.fromJson(rs.getString("hilfsmittel"), String[].class),
+	        		 rs.getString("auftragsfrist"), 
 	        		 rs.getString("eingangsdatum"));
 	         
 	       rs.close();
@@ -218,7 +217,7 @@ public class JDBConnection implements DBConnection{
 	/**
 	 * Gets the URI of an image with the specified id from the server.
 	 *
-	 * @param id 	the image id
+	 * @param name 	the image id
 	 * @return the image URI
 	 */
 	@Override
@@ -226,14 +225,16 @@ public class JDBConnection implements DBConnection{
 
 		File returnValue = new File(RestService.imageDirectory + name + ".png");
 		
-		if(returnValue.exists() && !returnValue.isDirectory()) { 
+		if(returnValue.exists() && !returnValue.isDirectory()) 
+		{ 
 		    return returnValue;
 		}
 		else
 		{
-			returnValue = new File(RestService.imageDirectory + name + ".jpeg");
+			returnValue = new File(RestService.imageDirectory + name + ".jpg");
 			
-			if(returnValue.exists() && !returnValue.isDirectory()) { 
+			if(returnValue.exists() && !returnValue.isDirectory()) 
+			{ 
 			    return returnValue;
 			}
 			else

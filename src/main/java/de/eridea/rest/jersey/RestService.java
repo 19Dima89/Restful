@@ -48,12 +48,12 @@ public class RestService {
 	private static final Logger logger = Logger.getRootLogger();
 	
 	/** Image directory of the server. */
-	//public static final String imageDirectory = "/opt/tomcat/webapps/images/";
-	public static final String imageDirectory = "/opt/apache-tomcat-7.0.65/webapps/images/";
+	public static final String imageDirectory = "/opt/tomcat/webapps/images/";
+	//public static final String imageDirectory = "/opt/apache-tomcat-7.0.65/webapps/images/";
 	
 	/** Document directory of the server. */
-	//public static final String documentDirectory = "/opt/tomcat/webapps/documents/";
-	public static final String documentDirectory = "/opt/apache-tomcat-7.0.65/webapps/documents/";
+	public static final String documentDirectory = "/opt/tomcat/webapps/documents/";
+	//public static final String documentDirectory = "/opt/apache-tomcat-7.0.65/webapps/documents/";
 	
 	/** Gson builder. */
 	private Gson gson = new GsonBuilder().create();
@@ -142,7 +142,8 @@ public class RestService {
 		try 
 		{
 			output = dbInterface.selectTask(id);
-			output.setDocuments(getDocumentList(id, documentDirectory));
+			output.setDocuments(getFileList(id, documentDirectory));
+			output.setImages(getFileList(id, imageDirectory));
 		} 
 		catch (SQLException e) 
 		{
@@ -251,12 +252,13 @@ public class RestService {
 	/**
 	 * Gets a single image from the server based on its name.
 	 *
-	 * @param id 		the image id
+	 * @param task_id the RestService task_id
+	 * @param img_id the RestService img_id
 	 * @return HTTP Response for an image download.
 	 */
 	@GET
 	@Path("/tasks/{task_id}/images/{img_id}")
-	@Produces("image/png")
+	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response getImage(@PathParam("task_id") int task_id, @PathParam("img_id") long img_id)
 	{
 		logger.info("Received GET-Request to download the file with the name "+task_id+"_"+img_id);
@@ -284,6 +286,7 @@ public class RestService {
 	 *
 	 * @param uploadedInputStream 		input stream of the uploaded image.
 	 * @param fileDetail 				meta-data of the uploaded image.
+	 * @param id the RestService id
 	 * @return HTTP Response for the image upload.
 	 */
 	@POST
@@ -333,7 +336,8 @@ public class RestService {
 	/**
 	 * Gets a single document from the server based on its name.
 	 *
-	 * @param name 		the name of the document
+	 * @param task_id the RestService task_id
+	 * @param doc_id the RestService doc_id
 	 * @return HTTP Response for a document download.
 	 */
 	@GET
@@ -366,6 +370,7 @@ public class RestService {
 	 *
 	 * @param uploadedInputStream 		input stream of the uploaded document.
 	 * @param fileDetail 				meta-data of the uploaded document.
+	 * @param id the RestService id
 	 * @return HTTP Response for the document upload.
 	 */
 	@POST
@@ -481,6 +486,12 @@ public class RestService {
 		return temp;
 	}
 	
+	/**
+	 * Gets the format of the given file (according to its name).
+	 *
+	 * @param imageName the RestService image name
+	 * @return the format
+	 */
 	public String getFormat(String imageName)
 	{
 	    String temp = new String(imageName);
@@ -492,7 +503,7 @@ public class RestService {
 	    }
 	    else if(temp.endsWith(".jpg") || temp.endsWith("jpeg"))
 	    {
-	    	return "JPEG";
+	    	return "JPG";
 	    }
 	    else if(temp.endsWith(".pdf"))
 	    {
@@ -505,7 +516,14 @@ public class RestService {
 	        
 	}
 	
-	private List<String> getDocumentList(int taskID, String path)
+	/**
+	 * Gets a list of all the files in the specified directory.
+	 *
+	 * @param taskID 		task id, which files should be found.
+	 * @param path 			directory path which s
+	 * @return a list which contains Strings with absolute file paths. 
+	 */
+	private List<String> getFileList(int taskID, String path)
 	{
 		ArrayList<String> returnValue = new ArrayList<String>();
 		
@@ -527,24 +545,5 @@ public class RestService {
 		}
 		
 		return returnValue;
-	}
-	
-	@GET
-	@Path("/debugging/{id}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response debuggingGET(@PathParam("id") int id)
-	{
-		
-			StringBuilder sb = new StringBuilder();
-			List<String> res = getDocumentList(id, documentDirectory);
-			
-			for(int i=0;i<res.size(); i++)
-			{
-				sb.append(res.get(i)+"\n");
-			}
-		
-			return Response.status(200).entity(gson.toJson(sb.toString())).header("Access-Control-Allow-Origin", "*")
-					.header("Access-Control-Allow-Methods", "GET").build();
-		
 	}
 }

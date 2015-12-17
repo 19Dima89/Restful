@@ -28,7 +28,7 @@ public class DetailedTask extends Task {
 	private String[] hilfsmittel;
 	
 	/** The DetailedTask images. */
-	private long[] images;
+	private List<String> images;
 	
 	/** The DetailedTask auftragsfrist. */
 	private String auftragsfrist;
@@ -59,14 +59,13 @@ public class DetailedTask extends Task {
 	 */
 	public DetailedTask(int id, String description, double latitude, double longitude, String status, 
 			List<Item> items, int plz, String ort, String strasse, String type, String information, 
-			String[] hilfsmittel, long[] images, String auftragsfrist, String eingangsdatum) 
+			String[] hilfsmittel, String auftragsfrist, String eingangsdatum) 
 	{
 		super(id, description, latitude, longitude, status, strasse, plz, ort);
 		this.items = items;
 		this.type = type;
 		this.information = information;
 		this.hilfsmittel = hilfsmittel;
-		this.images = images;
 		this.auftragsfrist = auftragsfrist;
 		this.eingangsdatum = eingangsdatum;
 	}
@@ -76,10 +75,15 @@ public class DetailedTask extends Task {
 	 *
 	 * @return long[] - The DetailedTask images.
 	 */
-	public long[] getImages() {
+	public List<String> getImages() {
 		return images;
 	}
 	
+	
+	public void setImages(List<String> images) {
+		this.images = images;
+	}
+
 	/**
 	 * Gets the DetailedTask type.
 	 *

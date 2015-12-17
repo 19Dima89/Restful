@@ -100,20 +100,20 @@ public class HardcodedData implements DBConnection{
 		data.add(new DetailedTask(1234, "Wartung Maschine 1234", 47.852967, 12.124801, 
 		 		"open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), 
 				new Item("9875", "Generator")), 83022, "Rosenheim", "Hochschulestr. 1", 
-		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"}, 
-		 		new long[]{123, 456}, "12.12.2015", "12.10.2015"));
+		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"},
+		 		"12.12.2015", "12.10.2015"));
 		
 		data.add(new DetailedTask(1235, "Wartung Maschine 1235", 47.852967, 12.124801, 
 		 		"closed", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), 
 				new Item("9875", "Generator")), 83022, "Rosenheim", "Hochschulestr. 1", 
-		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"}, 
-		 		new long[]{123, 456}, "12.12.2015", "12.10.2015"));
+		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"},
+		 		"12.12.2015", "12.10.2015"));
 		
 		data.add(new DetailedTask(1236, "Wartung Maschine 1236", 47.852967, 12.124801, 
 		 		"open", Arrays.asList(new Item("9876", "Ueberspannungsschutz"), 
 				new Item("9875", "Generator")), 83022, "Rosenheim", "Hochschulestr. 1", 
-		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"}, 
-		 		new long[]{123, 456}, "12.12.2015", "12.10.2015"));
+		 		"Wartung", "1. Stock", new String[]{"hammer", "bohrmaschine"},
+		 		"12.12.2015", "12.10.2015"));
 	}
 
 	/**
