@@ -1,16 +1,13 @@
 package de.eridea.rest.jersey;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -109,7 +106,7 @@ public class RestService {
 		}
 		else
 		{
-			ArrayList<Task> convertedTasks = convertDetailedTaskToTask(retrievedTasks);
+			ArrayList<Task> convertedTasks = UtilityClass.convertDetailedTaskToTask(retrievedTasks);
 			
 			if(maxResults <= 0 || maxResults > convertedTasks.size())
 			{
@@ -118,7 +115,7 @@ public class RestService {
 			
 			logger.info("Response with a list, which consists of "+maxResults+" tasks and the status-code 200");
 			
-			return Response.status(200).entity(gson.toJson(generateResponseData(convertedTasks, maxResults)))
+			return Response.status(200).entity(gson.toJson(UtilityClass.generateResponseData(convertedTasks, maxResults)))
 					.header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").build();
 		}
 	}
@@ -142,8 +139,8 @@ public class RestService {
 		try 
 		{
 			output = dbInterface.selectTask(id);
-			output.setDocuments(getFileList(id, documentDirectory));
-			output.setImages(getFileList(id, imageDirectory));
+			output.setDocuments(UtilityClass.getFileList(id, documentDirectory));
+			output.setImages(UtilityClass.getFileList(id, imageDirectory));
 		} 
 		catch (SQLException e) 
 		{
@@ -292,6 +289,7 @@ public class RestService {
 	@POST
 	@Path("/tasks/{id}/images")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response uploadImage(
 		@FormDataParam("img") InputStream uploadedInputStream,
 		@FormDataParam("img") FormDataContentDisposition fileDetail,
@@ -299,25 +297,26 @@ public class RestService {
 		
 		logger.info("Received POST-Request to upload a file with the name "+fileDetail.getFileName());
 		
-		String extension = getFileFormat(fileDetail.getFileName());
+		String extension = UtilityClass.getFileFormat(fileDetail.getFileName());
 		
 		boolean uploadSuccessful = false;
+		long imgID = 0;
 		
 		if(extension != null && !extension.equals("PDF"))
 		{
 			Calendar calendar = Calendar.getInstance();
-			long imgID = calendar.getTimeInMillis();
+			imgID = calendar.getTimeInMillis();
 			
 			String uploadedFileLocation = imageDirectory + id+"_"+imgID+"."+extension.toLowerCase();
 	
-			uploadSuccessful = writeToFile(uploadedInputStream, uploadedFileLocation);
+			uploadSuccessful = UtilityClass.writeToFile(uploadedInputStream, uploadedFileLocation);
 		}
 		
-		if(uploadSuccessful)
+		if(uploadSuccessful && imgID != 0)
 		{
-			logger.info("File "+fileDetail.getFileName()+" uploaded successfully!");
+			logger.info("File "+fileDetail.getFileName()+" uploaded successfully! Name changed to "+id+"_"+imgID);
 			
-			String output = "File uploaded!";
+			String output = Long.toString(imgID);
 	
 			return Response.status(200).entity(output).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "POST").build();
@@ -376,6 +375,7 @@ public class RestService {
 	@POST
 	@Path("/tasks/{id}/documents")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response uploadDoc(
 			@FormDataParam("doc") InputStream uploadedInputStream,
 			@FormDataParam("doc") FormDataContentDisposition fileDetail,
@@ -383,25 +383,26 @@ public class RestService {
 	{
 		logger.info("Received POST-Request to upload a document with the name "+fileDetail.getFileName());
 		
-		String extension = getFileFormat(fileDetail.getFileName());
+		String extension = UtilityClass.getFileFormat(fileDetail.getFileName());
 		
 		boolean uploadSuccessful = false;
+		long docID = 0;
 		
 		if(extension.equals("PDF"))
 		{
 			Calendar calendar = Calendar.getInstance();
-			long docID = calendar.getTimeInMillis();
+			docID = calendar.getTimeInMillis();
 			
 			String uploadedFileLocation = documentDirectory + id+"_"+docID+".pdf";
 	
-			uploadSuccessful = writeToFile(uploadedInputStream, uploadedFileLocation);
+			uploadSuccessful = UtilityClass.writeToFile(uploadedInputStream, uploadedFileLocation);
 		}
 		
-		if(uploadSuccessful)
+		if(uploadSuccessful && docID != 0)
 		{
-			logger.info("File "+fileDetail.getFileName()+" uploaded successfully!");
+			logger.info("File "+fileDetail.getFileName()+" uploaded successfully! Name changed to "+id+"_"+docID);
 			
-			String output = "File uploaded!";
+			String output = Long.toString(docID);
 	
 			return Response.status(200).entity(output).header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "POST").build();
@@ -416,133 +417,85 @@ public class RestService {
 					.header("Access-Control-Allow-Methods", "POST").build();
 		}
 	}
-
+	
 	/**
-	 * Save a file to the directory specified in @param uploadedFileLocation.
+	 * Delete a specified image on the server.
 	 *
-	 * @param uploadedInputStream the RestService uploaded input stream
-	 * @param uploadedFileLocation the RestService uploaded file location
-	 * @return true, if successful
+	 * @param task_id 		the id of the task linked to the image.
+	 * @param img_id 		the id of the image.
+	 * @return HTTP Response for the image delete.
 	 */
-	private boolean writeToFile(InputStream uploadedInputStream,
-		String uploadedFileLocation) {
-
-		try 
+	@DELETE
+	@Path("tasks/{task_id}/images/{img_id}")
+	public Response deleteImage(@PathParam("task_id") int task_id, @PathParam("img_id") long img_id)
+	{
+		logger.info("Received order to delete the image with the name "+task_id +"_"+img_id);
+		
+		File fileToDelete = null;
+		
+		if(new File(imageDirectory + task_id + "_" + img_id + ".png").exists())
 		{
-			OutputStream out = new FileOutputStream(new File(
-					uploadedFileLocation));
-			int read = 0;
-			byte[] bytes = new byte[1024];
-
-			out = new FileOutputStream(new File(uploadedFileLocation));
-			while ((read = uploadedInputStream.read(bytes)) != -1) {
-				out.write(bytes, 0, read);
-			}
-			out.flush();
-			out.close();
+			fileToDelete = new File(imageDirectory + task_id + "_" + img_id + ".png");
+		}
+		else if(new File(imageDirectory + task_id + "_" + img_id + ".jpg").exists())
+		{
+			fileToDelete = new File(imageDirectory + task_id + "_" + img_id + ".jpg");
+		}
+		
+		if(fileToDelete != null)
+		{
+			fileToDelete.delete();
 			
-			return true;
-		} 
-		catch (IOException e) 
-		{
-			return false;
-		}
-	}
-	
-	/**
-	 * Converts an ArrayList of DetailedTask to an ArrayList of simple Tasks.
-	 *
-	 * @param dTask 		ArrayList, which should be converted
-	 * @return ArrayList<Task> 	Converted List of Tasks
-	 */
-	private ArrayList<Task> convertDetailedTaskToTask(ArrayList<DetailedTask> dTask)
-	{
-		ArrayList<Task> returnList = new ArrayList<Task>();
-		
-		for(int i=0;i<dTask.size(); i++)
-		{
-			returnList.add(dTask.get(i).returnAsTask());
-		}
-		
-		return returnList;
-	}
-	
-	/**
-	 * Generates an ArrayList of Tasks, which is limited to the number of maxResults.
-	 *
-	 * @param inputList 		The input list
-	 * @param maxResults 		Max number of entries the list should have
-	 * @return ArrayList<Task>	Generated limited list
-	 */
-	private ArrayList<Task> generateResponseData(ArrayList<Task> inputList, int maxResults)
-	{
-		ArrayList<Task> temp = new ArrayList<Task>();
-		
-		for(int i=0; i<maxResults; i++)
-		{
-			temp.add(inputList.get(i));
-		}
-		
-		return temp;
-	}
-	
-	/**
-	 * Gets the format of the given file (according to its name).
-	 *
-	 * @param imageName the RestService image name
-	 * @return the format
-	 */
-	public String getFileFormat(String imageName)
-	{
-	    String temp = new String(imageName);
-	    temp.toLowerCase();
-
-	    if(temp.endsWith(".png"))
-	    {
-	    	return "PNG";
-	    }
-	    else if(temp.endsWith(".jpg") || temp.endsWith("jpeg"))
-	    {
-	    	return "JPG";
-	    }
-	    else if(temp.endsWith(".pdf"))
-	    {
-	    	return "PDF";
-	    }
-	    else
-	    {
-	    	return null;
-	    }
-	}
-	
-	/**
-	 * Gets a list of all the files in the specified directory.
-	 *
-	 * @param taskID 		task id, which files should be found.
-	 * @param path 			directory path which s
-	 * @return a list which contains Strings with absolute file paths. 
-	 */
-	private List<String> getFileList(int taskID, String path)
-	{
-		ArrayList<String> returnValue = new ArrayList<String>();
-		
-		File[] listOfFiles = new File(path).listFiles();
-		
-		for(int i=0;i<listOfFiles.length;i++)
-		{
-			String[] explodedName = listOfFiles[i].getName().split("_");
+			logger.info("Image with the name "+task_id +"_"+img_id+" deleted! Response with status-code 200");
 			
-			if(explodedName[0].equals(Integer.toString(taskID)))
-			{
-				returnValue.add(explodedName[1].substring(0, explodedName[1].length()-4));
-			}
+			return Response.status(200).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "DELETE").build();
 		}
-		
-		if(returnValue.isEmpty())
+		else
 		{
-			return null;
+			logger.info("Image "+task_id +"_"+img_id+" could not be deleted, because it could not "
+					+ "be found on the server! Response with the status-code 400");
+			
+			return Response.status(400).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "DELETE").build();
+		}
+	}
+	
+	/**
+	 * Delete a specified document on the server.
+	 *
+	 * @param task_id 		the id of the task linked to the document.
+	 * @param doc_id 		the id of the document.
+	 * @return HTTP Response for the document delete.
+	 */
+	@DELETE
+	@Path("tasks/{task_id}/documents/{doc_id}")
+	public Response deleteDocument(@PathParam("task_id") int task_id, @PathParam("doc_id") long doc_id)
+	{
+		logger.info("Received order to delete the document with the name "+task_id +"_"+doc_id);
+		
+		File fileToDelete = null;
+		
+		if(new File(documentDirectory + task_id + "_" + doc_id + ".pdf").exists())
+		{
+			fileToDelete = new File(documentDirectory + task_id + "_" + doc_id + ".pdf");
 		}
 		
-		return returnValue;
+		if(fileToDelete != null)
+		{
+			fileToDelete.delete();
+			logger.info("Document with the name "+task_id +"_"+doc_id+" deleted! Response with status-code 200");
+			
+			return Response.status(200).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "DELETE").build();
+		}
+		else
+		{
+			logger.info("Document "+task_id +"_"+doc_id+" could not be deleted, because it could not "
+					+ "be found on the server! Response with the status-code 400");
+			
+			return Response.status(400).header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "DELETE").build();
+		}
 	}
 }
