@@ -57,25 +57,7 @@ public class UtilityClass {
 	 */
 	public static String getFileFormat(String imageName)
 	{
-	    String temp = new String(imageName);
-	    temp.toLowerCase();
-
-	    if(temp.endsWith(".png"))
-	    {
-	    	return "PNG";
-	    }
-	    else if(temp.endsWith(".jpg") || temp.endsWith("jpeg"))
-	    {
-	    	return "JPG";
-	    }
-	    else if(temp.endsWith(".pdf"))
-	    {
-	    	return "PDF";
-	    }
-	    else
-	    {
-	    	return null;
-	    }
+	    
 	}
 	
 	/**
